@@ -1,0 +1,77 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Rockstar.Generator</RootNamespace>
+    <LangVersion>preview</LangVersion>
+    <PackageId>Rockstar.Generator</PackageId>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Description>The Rockstar to C# transpiler, implemented as a source-code generator.</Description>
+    <PackageTags>Rockstar, Transpiler, Source-Code Generator</PackageTags>
+    <PackageIcon>rockstar.png</PackageIcon>
+    <Authors>Rafael Oliveira</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/theolivenbaum/rockstar-feat-csharp</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Resources\Variable.cs" />
+    <None Remove="Resources\parser.js" />
+    <EmbeddedResource Include="Resources\parser.js" />
+    <EmbeddedResource Include="Resources\Variable.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.8.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2" PrivateAssets="all" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <!-- Generator dependencies -->
+    <PackageReference Include="Jint" Version="3.0.0-beta-1914" GeneratePathProperty="true" PrivateAssets="all" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" GeneratePathProperty="true" PrivateAssets="all" />
+    <PackageReference Include="Esprima" Version="2.0.0-beta-1328" GeneratePathProperty="true" PrivateAssets="all" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Resource Include="Resources\parser.js" />
+    <Resource Include="Resources\Variable.cs" />
+  </ItemGroup>
+  
+  <PropertyGroup>
+    <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+  </PropertyGroup>
+
+  <Target Name="GetDependencyTargetPaths">
+    <ItemGroup>
+      <TargetPathWithTargetPlatformMoniker Include="$(PkgJint)\lib\netstandard2.0\Jint.dll" IncludeRuntimeDependency="false" />
+      <TargetPathWithTargetPlatformMoniker Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\Newtonsoft.Json.dll" IncludeRuntimeDependency="false" />
+      <TargetPathWithTargetPlatformMoniker Include="$(PkgEsprima)\lib\netstandard2.0\Esprima.dll" IncludeRuntimeDependency="false" />
+    </ItemGroup>
+  </Target>
+
+
+  <ItemGroup>
+    <!-- Package the generator in the analyzer directory of the nuget package -->
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+
+    <None Include="$(PkgJint)\lib\netstandard2.0\Jint.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\Newtonsoft.Json.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="$(PkgEsprima)\lib\netstandard2.0\Esprima.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="$(PkgEsprima)\lib\netstandard2.0\Esprima.xml" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="rockstar.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
